@@ -38,8 +38,10 @@ namespace Terraria.Social.Steam
 		}
 
 		internal static void OnGameExitCleanup() {
-			if (ModManager.SteamUser)
+			if (ModManager.SteamUser) {
+				SteamAPI.Shutdown();
 				return;
+			}
 
 			GameServer.Shutdown();
 		}
@@ -343,7 +345,7 @@ namespace Terraria.Social.Steam
 			private const int PlaytimePagingConst = 100; //https://partner.steamgames.com/doc/api/ISteamUGC#StartPlaytimeTracking
 
 			public static void BeginPlaytimeTracking(LocalMod[] localMods) {
-				if (localMods.Length == 0)
+				if (localMods.Length == 0 || !SteamAvailable)
 					return;
 
 				List<PublishedFileId_t> list = new List<PublishedFileId_t>();
@@ -374,7 +376,7 @@ namespace Terraria.Social.Steam
 				// Call the appropriate variant
 				if (SteamUser)
 					SteamUGC.StopPlaytimeTrackingForAllItems();
-				else
+				else if (SteamAvailable)
 					SteamGameServerUGC.StopPlaytimeTrackingForAllItems();
 			}
 		}
